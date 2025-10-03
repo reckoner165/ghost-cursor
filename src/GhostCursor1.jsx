@@ -27,9 +27,15 @@ const GhostCursor1 = () => {
       messages: [
         {
           role: "user",
-          content: `Generate a 10-sentence essay on the topic ${inputWord}. Each sentence should have a certain amount of humor. The following array contains 10 values ranging from 0-100 each, where 0 is serous and 100 is very funny for each sentence. Keep it snappy, short and simple, but try to make sure the humor of each sentence doesn't depend on setups. When in doubt, err on the side of dry humor. A little bit of gallows humor is okay, but no explicit mention of violence or hate or gore. Here's the array: ${JSON.stringify(
-            values
-          )}`,
+          content: `
+          Generate a 10-sentence essay on the topic ${inputWord}. 
+          The following array contains 10 values ranging from 0-100 each. 
+          Take each element in the array and use it as a guide for how funny the corresponding setence should be.
+          For example, an array that goes [0,0,10,...] would mean that the sentence 1 and 2 should be very serious, but sentence 3 should be very funny and so on.
+          Keep it snappy, short and simple. Nothing too winding.
+          When in doubt, err on the side of dry humor. Go British in terms of humor. 
+          A little bit of gallows humor is okay, but no explicit mention of violence or hate or gore. 
+          Here's the array: ${JSON.stringify(values)}`,
         },
       ],
     });
