@@ -9,7 +9,7 @@ const client = new OpenAI({
 });
 
 const GhostCursor1 = () => {
-  const [values, setValues] = useState(Array(10).fill(50));
+  const [values, setValues] = useState(Array(10).fill(0));
 
   const [inputWord, setInputWord] = useState("");
   const [outputEssay, setOutputEssay] = useState("");
@@ -17,25 +17,41 @@ const GhostCursor1 = () => {
   const handleChange = (index, newValue) => {
     // create a new array so React sees the update
     const updated = [...values];
-    updated[index] = newValue;
+    updated[index] = newValue[0];
     setValues(updated);
   };
 
   const submit = useCallback(async () => {
+    console.log(values);
     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
+        // {
+        //   role: "user",
+        //   content: `
+        //   Generate a 10-sentence paragraph about ${inputWord}, where each sentence corresponds to one of the following humor scores: ${JSON.stringify(
+        //     values
+        //   )}.
+        //   A humor score of 0 must be written in a completely serious, academic, or factual tone with no humor, no exaggeration, and no jokes at all.
+        //   A humor score greater than 0 can contain humor, with the level of humor increasing in proportion to the score. 100 can be maximally funny and absurd.
+        //   Adhere to the given list of humor scores strictly. Don't try to smooth transitions if there's a huge difference in humor scores between successive sentences.
+        //   Please keep the topic coherent across sentences. Keep the sentences short.
+        //   `,
+        //   //When generating sentences with high humor score, a little bit of gallows humor is okay, but no explicit mention of violence or hate or gore.
+        // },
         {
           role: "user",
           content: `
-          Generate a 10-sentence essay on the topic ${inputWord}. 
-          The following array contains 10 values ranging from 0-100 each. 
-          Take each element in the array and use it as a guide for how funny the corresponding setence should be.
-          For example, an array that goes [0,0,10,...] would mean that the sentence 1 and 2 should be very serious, but sentence 3 should be very funny and so on.
-          Keep it snappy, short and simple. Nothing too winding.
-          When in doubt, err on the side of dry humor. Go British in terms of humor. 
-          A little bit of gallows humor is okay, but no explicit mention of violence or hate or gore. 
-          Here's the array: ${JSON.stringify(values)}`,
+            Generate a 10-line short interpersonal story. Each line must correspond to a tension score in the following list: ${JSON.stringify(
+              values
+            )}
+            A tension score of 0 represents complete calm or release — no suspense, danger, or anxiety.
+            A tension score of 100 represents maximal tension — extreme suspense, danger, or emotional intensity.
+            Lines with intermediate scores (1–99) should have tension proportional to the score.
+            Do not introduce tension in lines assigned 0. Do not reduce tension in lines assigned 100.
+            Keep the story coherent, with a clear setting, characters, or narrative thread. Some sentences can be dialogs.
+            Output each line separately for clarity, ideally with the tension score as a prefix
+            `,
         },
       ],
     });
@@ -83,7 +99,7 @@ const GhostCursor1 = () => {
             <CustomSlider
               key={index}
               onChange={(v) => handleChange(index, v)}
-              defaultValue={50}
+              defaultValue={0}
               value={value}
             />
             {value}
